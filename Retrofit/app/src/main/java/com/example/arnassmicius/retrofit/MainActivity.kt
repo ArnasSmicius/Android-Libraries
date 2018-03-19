@@ -9,6 +9,8 @@ import android.widget.Toast
 
 import com.example.arnassmicius.retrofit.api.model.GitHubRepo
 import com.example.arnassmicius.retrofit.api.service.GitHubClient
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,9 +28,18 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.rv_list)
 
+        // Creating OkHttp client
+        val okHttpClient = OkHttpClient.Builder()
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BODY
+        if (BuildConfig.DEBUG) {
+            okHttpClient.addInterceptor(logging)
+        }
+
         val builder = Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient.build())
 
         val retrofit = builder.build()
 
